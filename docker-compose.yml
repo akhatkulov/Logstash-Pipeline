@@ -1,0 +1,59 @@
+version: "3.8"
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: updive-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - updive
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.0
+    container_name: updive-logstash
+    hostname: updive-logstash
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    volumes:
+      - ./conf.d:/usr/share/logstash/pipeline:ro
+      - ./config/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
+      - ./config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./certs:/usr/share/logstash/certs:ro
+      - ./geoip:/usr/share/logstash/geoip:ro
+      - logstash_data:/usr/share/logstash/data
+    environment:
+      ELASTICSEARCH_HOSTS: "${ELASTICSEARCH_HOSTS:-https://elasticsearch:9200}"
+      ELASTICSEARCH_USER: "${ELASTICSEARCH_USER:-elastic}"
+      ELASTICSEARCH_PASSWORD: "${ELASTICSEARCH_PASSWORD}"
+      LS_JAVA_OPTS: "-Xms1g -Xmx1g"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9600 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - updive
+
+volumes:
+  logstash_data:
+  es_data:
+
+networks:
+  updive:
+    driver: bridge

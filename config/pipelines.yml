@@ -1,0 +1,5 @@
+- pipeline.id: updive-main
+  path.config: "/usr/share/logstash/pipeline/*.conf"
+  pipeline.workers: 4
+  pipeline.batch.size: 500
+  pipeline.batch.delay: 50
