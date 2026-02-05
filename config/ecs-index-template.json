@@ -1,0 +1,351 @@
+{
+  "index_patterns": ["updive-*"],
+  "priority": 200,
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 1,
+      "index.mapping.total_fields.limit": 10000
+    },
+    "mappings": {
+      "dynamic_templates": [
+        {
+          "strings_as_keywords": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword",
+              "ignore_above": 1024
+            }
+          }
+        }
+      ],
+      "properties": {
+        "@timestamp": { "type": "date" },
+        "message": { "type": "text" },
+        
+        "ecs": {
+          "properties": {
+            "version": { "type": "keyword" }
+          }
+        },
+        
+        "event": {
+          "properties": {
+            "category": { "type": "keyword" },
+            "type": { "type": "keyword" },
+            "kind": { "type": "keyword" },
+            "outcome": { "type": "keyword" },
+            "action": { "type": "keyword" },
+            "code": { "type": "keyword" },
+            "module": { "type": "keyword" },
+            "dataset": { "type": "keyword" },
+            "risk_score": { "type": "float" },
+            "ingested": { "type": "date" }
+          }
+        },
+        
+        "host": {
+          "properties": {
+            "name": { "type": "keyword" },
+            "hostname": { "type": "keyword" },
+            "ip": { "type": "ip" },
+            "os": {
+              "properties": {
+                "name": { "type": "keyword" },
+                "type": { "type": "keyword" },
+                "family": { "type": "keyword" },
+                "version": { "type": "keyword" },
+                "kernel": { "type": "keyword" }
+              }
+            }
+          }
+        },
+        
+        "user": {
+          "properties": {
+            "name": { "type": "keyword" },
+            "id": { "type": "keyword" },
+            "domain": { "type": "keyword" },
+            "email": { "type": "keyword" },
+            "target": {
+              "properties": {
+                "name": { "type": "keyword" },
+                "id": { "type": "keyword" },
+                "domain": { "type": "keyword" }
+              }
+            },
+            "effective": {
+              "properties": {
+                "name": { "type": "keyword" },
+                "id": { "type": "keyword" }
+              }
+            }
+          }
+        },
+        
+        "process": {
+          "properties": {
+            "name": { "type": "keyword" },
+            "executable": { "type": "keyword" },
+            "command_line": { "type": "wildcard" },
+            "pid": { "type": "long" },
+            "entity_id": { "type": "keyword" },
+            "working_directory": { "type": "keyword" },
+            "args": { "type": "keyword" },
+            "args_count": { "type": "long" },
+            "hash": {
+              "properties": {
+                "md5": { "type": "keyword" },
+                "sha1": { "type": "keyword" },
+                "sha256": { "type": "keyword" },
+                "sha512": { "type": "keyword" }
+              }
+            },
+            "parent": {
+              "properties": {
+                "name": { "type": "keyword" },
+                "executable": { "type": "keyword" },
+                "command_line": { "type": "wildcard" },
+                "pid": { "type": "long" },
+                "entity_id": { "type": "keyword" }
+              }
+            }
+          }
+        },
+        
+        "file": {
+          "properties": {
+            "name": { "type": "keyword" },
+            "path": { "type": "keyword" },
+            "extension": { "type": "keyword" },
+            "directory": { "type": "keyword" },
+            "size": { "type": "long" },
+            "hash": {
+              "properties": {
+                "md5": { "type": "keyword" },
+                "sha1": { "type": "keyword" },
+                "sha256": { "type": "keyword" }
+              }
+            }
+          }
+        },
+        
+        "dll": {
+          "properties": {
+            "name": { "type": "keyword" },
+            "path": { "type": "keyword" },
+            "hash": {
+              "properties": {
+                "md5": { "type": "keyword" },
+                "sha1": { "type": "keyword" },
+                "sha256": { "type": "keyword" }
+              }
+            },
+            "code_signature": {
+              "properties": {
+                "exists": { "type": "boolean" },
+                "subject_name": { "type": "keyword" },
+                "valid": { "type": "boolean" }
+              }
+            }
+          }
+        },
+        
+        "registry": {
+          "properties": {
+            "path": { "type": "keyword" },
+            "hive": { "type": "keyword" },
+            "key": { "type": "keyword" },
+            "value": { "type": "keyword" },
+            "data": {
+              "properties": {
+                "strings": { "type": "keyword" },
+                "type": { "type": "keyword" }
+              }
+            }
+          }
+        },
+        
+        "source": {
+          "properties": {
+            "ip": { "type": "ip" },
+            "port": { "type": "long" },
+            "domain": { "type": "keyword" },
+            "bytes": { "type": "long" },
+            "geo": {
+              "properties": {
+                "city_name": { "type": "keyword" },
+                "country_name": { "type": "keyword" },
+                "country_iso_code": { "type": "keyword" },
+                "region_name": { "type": "keyword" },
+                "location": { "type": "geo_point" }
+              }
+            },
+            "as": {
+              "properties": {
+                "number": { "type": "long" },
+                "organization": {
+                  "properties": {
+                    "name": { "type": "keyword" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        
+        "destination": {
+          "properties": {
+            "ip": { "type": "ip" },
+            "port": { "type": "long" },
+            "domain": { "type": "keyword" },
+            "bytes": { "type": "long" },
+            "geo": {
+              "properties": {
+                "city_name": { "type": "keyword" },
+                "country_name": { "type": "keyword" },
+                "country_iso_code": { "type": "keyword" },
+                "region_name": { "type": "keyword" },
+                "location": { "type": "geo_point" }
+              }
+            },
+            "as": {
+              "properties": {
+                "number": { "type": "long" },
+                "organization": {
+                  "properties": {
+                    "name": { "type": "keyword" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        
+        "network": {
+          "properties": {
+            "direction": { "type": "keyword" },
+            "transport": { "type": "keyword" },
+            "protocol": { "type": "keyword" },
+            "type": { "type": "keyword" },
+            "bytes": { "type": "long" },
+            "packets": { "type": "long" },
+            "community_id": { "type": "keyword" }
+          }
+        },
+        
+        "dns": {
+          "properties": {
+            "question": {
+              "properties": {
+                "name": { "type": "keyword" },
+                "registered_domain": { "type": "keyword" },
+                "top_level_domain": { "type": "keyword" },
+                "type": { "type": "keyword" }
+              }
+            },
+            "answers": {
+              "properties": {
+                "data": { "type": "keyword" },
+                "type": { "type": "keyword" }
+              }
+            },
+            "response_code": { "type": "keyword" }
+          }
+        },
+        
+        "http": {
+          "properties": {
+            "request": {
+              "properties": {
+                "method": { "type": "keyword" },
+                "referrer": { "type": "keyword" }
+              }
+            },
+            "response": {
+              "properties": {
+                "status_code": { "type": "long" },
+                "body": {
+                  "properties": {
+                    "bytes": { "type": "long" }
+                  }
+                }
+              }
+            },
+            "version": { "type": "keyword" }
+          }
+        },
+        
+        "url": {
+          "properties": {
+            "original": { "type": "keyword" },
+            "path": { "type": "keyword" },
+            "query": { "type": "keyword" },
+            "domain": { "type": "keyword" },
+            "scheme": { "type": "keyword" }
+          }
+        },
+        
+        "user_agent": {
+          "properties": {
+            "original": { "type": "keyword" },
+            "name": { "type": "keyword" },
+            "version": { "type": "keyword" },
+            "os": {
+              "properties": {
+                "name": { "type": "keyword" },
+                "version": { "type": "keyword" }
+              }
+            },
+            "device": {
+              "properties": {
+                "name": { "type": "keyword" }
+              }
+            }
+          }
+        },
+        
+        "agent": {
+          "properties": {
+            "name": { "type": "keyword" },
+            "type": { "type": "keyword" },
+            "version": { "type": "keyword" }
+          }
+        },
+        
+        "related": {
+          "properties": {
+            "ip": { "type": "ip" },
+            "hash": { "type": "keyword" },
+            "user": { "type": "keyword" },
+            "host": { "type": "keyword" }
+          }
+        },
+        
+        "threat": {
+          "properties": {
+            "indicator": {
+              "properties": {
+                "ip": { "type": "ip" },
+                "type": { "type": "keyword" },
+                "first_seen": { "type": "date" },
+                "confidence": { "type": "keyword" }
+              }
+            }
+          }
+        },
+        
+        "rule": {
+          "properties": {
+            "name": { "type": "keyword" },
+            "id": { "type": "keyword" },
+            "ruleset": { "type": "keyword" }
+          }
+        },
+        
+        "labels": { "type": "object" },
+        "tags": { "type": "keyword" }
+      }
+    }
+  }
+}
